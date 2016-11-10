@@ -23,7 +23,6 @@ public class User {
 	private String phoneNumber;
 	private String password;
 	private boolean active;
-
 	protected User() {}
 
 	public User(String firstName, String lastName, String email, String phoneNumber, String password, boolean active) {
