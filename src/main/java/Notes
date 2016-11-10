@@ -1,0 +1,2 @@
+So far what we've added to this application from Step1 is an Admin feature. The security makes it so that no one can 
+make changes unless you are seen by the aplication as an Admin under the data.sql. So far I have no questions. I can see how everything is working so far.
