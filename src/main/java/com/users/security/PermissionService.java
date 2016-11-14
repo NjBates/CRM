@@ -12,13 +12,6 @@ import org.springframework.stereotype.Service;
 import com.users.repositories.ContactRepository;
 import com.users.repositories.UserRepository;
 
-
-
-
-// @Service is used for bean detection
-// also to annotate classes at service layer level.
-// if we use @Service in all layers, all the beans will get 
-// instantiated and no issues. 
 @Service
 
 public class PermissionService {

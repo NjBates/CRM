@@ -11,23 +11,23 @@ import javax.persistence.Table;
 import org.springframework.util.Base64Utils;
 
 @Entity
-@Table(name="contact_images")
+@Table(name = "contact_images")
 public class ContactImage {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
+	public long id;
 
 	@Column(unique = true)
-	private long contactId;
+	public long contactId;
 
-	private String contentType;
+	public String contentType;
 
 	@Lob
-	private byte[] image;
+	public byte[] image;
 
 	protected ContactImage() {}
-	
+
 	public ContactImage(long contactId) {
 		this.contactId = contactId;
 	}
@@ -37,10 +37,10 @@ public class ContactImage {
 		this.contentType = contentType;
 		this.image = image;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "UserImage [id=" + id + ", userId=" + contactId + ", contentType=" + contentType + "]";
+		return "UserImage [id=" + id + ", contactId=" + contactId + ", contentType=" + contentType + "]";
 	}
 
 	public long getId() {
@@ -51,12 +51,12 @@ public class ContactImage {
 		this.id = id;
 	}
 
-	public long getContactId() {
+	public long getUserId() {
 		return contactId;
 	}
 
-	public void setContactId(long contactId) {
-		this.contactId = contactId;
+	public void setUserId(long userId) {
+		this.contactId = userId;
 	}
 
 	public String getContentType() {
@@ -77,5 +77,5 @@ public class ContactImage {
 
 	public String getHtmlSrc() {
 		return "data:" + this.contentType + ";base64," + Base64Utils.encodeToString(image);
-		}
+	}
 }

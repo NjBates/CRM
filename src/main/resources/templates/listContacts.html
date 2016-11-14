@@ -13,11 +13,10 @@
 				<th>Last Name</th>
 				<th>Email</th>
 				<th>Phone</th>
-				<th />
 			</tr>
 		</thead>
 		<tbody>
-			<tr th:each="user : ${contacts}">
+			<tr th:each="contact : ${contacts}">
 				<td th:text="${contact.firstName}"></td>
 				<td th:text="${contact.lastName}"></td>
 				<td th:text="${contact.email}"></td>

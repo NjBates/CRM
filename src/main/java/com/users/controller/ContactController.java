@@ -5,7 +5,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
@@ -24,26 +23,24 @@ import com.users.security.PermissionService;
 
 @Controller
 public class ContactController {
-	
-	private static final Logger log = LoggerFactory.getLogger(ContactController.class);
-	
+	private static final Logger log = LoggerFactory.getLogger(IndexController.class);
+
 	@Autowired
 	private ContactRepository contactRepo;
 
 	@Autowired
 	private ContactImageRepository contactImageRepo;
-	
+
 	@Autowired
-	public PermissionService permissionService;
-	
+	private PermissionService permissionService;
+
 	@RequestMapping("/contacts")
 	public String listContacts(Model model) {
 		long currentUserId = permissionService.findCurrentUserId();
-		model.addAttribute("contacts",
-	contactRepo.findAllByUserIdOrderByFirstNameAscLastNameAsc(currentUserId));
+		model.addAttribute("contacts", contactRepo.findAllByUserIdOrderByFirstNameAscLastNameAsc(currentUserId));
 		return "listContacts";
 	}
-	
+
 	@RequestMapping("/contact/{contactId}")
 	public String contact(@PathVariable long contactId, Model model) {
 		model.addAttribute("contact", contactRepo.findOne(contactId));
@@ -52,10 +49,10 @@ public class ContactController {
 		if (!CollectionUtils.isEmpty(images)) {
 			model.addAttribute("contactImage", images.get(0));
 		}
-		
 		model.addAttribute("permissions", permissionService);
 		return "contact";
 	}
+
 
 	@RequestMapping(value = "/contact/{contactId}/edit", method = RequestMethod.GET)
 	public String contactEdit(@PathVariable long contactId, Model model) {
@@ -72,6 +69,9 @@ public class ContactController {
 		}
 		return "contactEdit";
 	}
+
+	
+	
 
 	@RequestMapping(value = "/contact/{contactId}/edit", method = RequestMethod.POST)
 	public String profileSave(@ModelAttribute Contact contact, @PathVariable long contactId,
@@ -103,7 +103,6 @@ public class ContactController {
 
 		} else if (removeImage) {
 			log.debug("Removing Image");
-			// contact.setImage(null);
 			List<ContactImage> images = contactImageRepo.findByContactId(contact.getId());
 
 			for (ContactImage img : images) {
@@ -113,7 +112,4 @@ public class ContactController {
 
 		return contact(contactId, model);
 	}
-
-
-
 }

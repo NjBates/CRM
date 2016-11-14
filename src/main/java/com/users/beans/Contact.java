@@ -8,44 +8,39 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="contacts")
+@Table(name = "contacts")
 public class Contact {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
-	
-	private String firstName;
-	private String lastName;
+	public long id;
+	public long userId;
+
+	public String firstName;
+	public String lastName;
 
 	@Column(unique = true)
-	private String email;
-	private String phoneNumber;
-	private String password;
-	private boolean active;
-	
-	protected Contact() {}
+	public String email;
+	public String phoneNumber;
+	public boolean active;
 
-	public Contact(String firstName, String lastName, String email, String phoneNumber, String password, boolean active) {
+	protected Contact() {
+	}
+
+	public Contact(String firstName, String lastName, String email, String phoneNumber,
+			boolean active, long userId) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
 		this.phoneNumber = phoneNumber;
-		this.password = password;
 		this.active = active;
+		this.userId = userId;
 	}
-	
+
 	@Override
 	public String toString() {
-			return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phoneNumber=" + phoneNumber + ", active=" + active + "]";
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
+		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email="
+				+ email + ", phoneNumber=" + phoneNumber + ", active=" + active + "]";
 	}
 
 	public String getFirstName() {
@@ -80,12 +75,12 @@ public class Contact {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public String getPassword() {
-		return password;
+	public long getId() {
+		return id;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public boolean isActive() {
@@ -94,6 +89,14 @@ public class Contact {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(long userId) {
+		this.userId = userId;
 	}
 
 }
