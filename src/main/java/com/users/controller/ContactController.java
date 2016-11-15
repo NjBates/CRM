@@ -72,7 +72,7 @@ public class ContactController {
 		}
 		return "contactEdit";
 	}
- 
+
 	@Secured("ROLE_USER")
 	@RequestMapping(value = "/contact/{contactId}/edit", method = RequestMethod.POST)
 	public String profileSave(@ModelAttribute Contact contact, @PathVariable long contactId,
@@ -91,8 +91,7 @@ public class ContactController {
 		if (!file.isEmpty()) {
 			try {
 				List<ContactImage> images = contactImageRepo.findByContactId(contact.getId());
-				ContactImage img = (images.size() > 0) ? images.get(0)
-						: new ContactImage(contactId);
+				ContactImage img = (images.size() > 0) ? images.get(0) : new ContactImage(contactId);
 				img.setContentType(file.getContentType());
 				img.setImage(file.getBytes());
 				contactImageRepo.save(img);
@@ -104,6 +103,7 @@ public class ContactController {
 
 		} else if (removeImage) {
 			log.debug("Removing Image");
+			// contact.setImage(null);
 			List<ContactImage> images = contactImageRepo.findByContactId(contact.getId());
 
 			for (ContactImage img : images) {
@@ -113,15 +113,22 @@ public class ContactController {
 
 		return contact(contactId, model);
 	}
-	
+
 	@Secured("ROLE_USER")
 	@RequestMapping(value = "/contact/create", method = RequestMethod.GET)
-	public String createContact(@ModelAttribute Contact contact,
-			@RequestParam("file") MultipartFile file, Model model) {
+	public String createContact(Model model) {
+		model.addAttribute("contact", new Contact(permissionService.findCurrentUserId()));
+
+		return "contactCreate";
+	}
+	 
+	@Secured("ROLE_USER")
+	@RequestMapping(value = "/contact/create", method = RequestMethod.POST)
+	public String createContact(@ModelAttribute Contact contact, @RequestParam("file") MultipartFile file,
+			Model model) {
 
 		Contact savedContact = contactRepo.save(contact);
 
 		return profileSave(savedContact, savedContact.getId(), false, file, model);
 	}
-
 }

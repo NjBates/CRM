@@ -23,8 +23,9 @@ public class Contact {
 	public String email;
 	public String phoneNumber;
 	public boolean active;
-
-	protected Contact() {
+	
+	protected Contact(){
+		
 	}
 
 	public Contact(String firstName, String lastName, String email, String phoneNumber,
@@ -34,6 +35,10 @@ public class Contact {
 		this.email = email;
 		this.phoneNumber = phoneNumber;
 		this.active = active;
+		this.userId = userId;
+	}
+	
+	public Contact(long userId){
 		this.userId = userId;
 	}
 
