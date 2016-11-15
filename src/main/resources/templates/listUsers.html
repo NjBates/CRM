@@ -1,7 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorator="layouts/basic">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layouts/basic">
 <head>
 <title>Users</title>
 <meta http-equiv=" Content-Type" content="text/html; charset=UTF-8" />
@@ -29,5 +27,9 @@
 		</tbody>
 	</table>
 	<a href="/user/create">Create New User</a>
+	<form th:action="@{|/user/search|}" method="POST">
+	   <input type="text" placeholder="Search..." name="search" th:value="${search}" />
+	   <input type="submit" th:value="Search"/>
+	</form> 
 </body>
 </html>

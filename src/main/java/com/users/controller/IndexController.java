@@ -29,8 +29,8 @@ import com.users.repositories.UserImageRepository;
 import com.users.repositories.UserRepository;
 import com.users.repositories.UserRoleRepository;
 import com.users.security.PermissionService;
-import com.users.service.ImageService;
 import com.users.service.EmailService;
+import com.users.service.ImageService;
 
 @Controller
 public class IndexController {
@@ -41,28 +41,26 @@ public class IndexController {
 
 	@Autowired
 	private UserImageRepository userImageRepo;
-	
+
 	@Autowired
 	private UserRoleRepository userRoleRepo;
-	
+
 	@Autowired
 	private PermissionService permissionService;
-	
+
 	@Autowired
 	private ImageService imageService;
-	
+
 	@Autowired
 	private EmailService emailService;
 
 	@RequestMapping("/greeting")
-	public String greeting(
-	@RequestParam(value = "name", required = false, defaultValue = "World") String name,
-	Model model) {
-	model.addAttribute("name", name);
-	model.addAttribute("repoCount", userRepo.count());
-	return "greeting";
+	public String greeting(@RequestParam(value = "name", required = false, defaultValue = "World") String name,
+			Model model) {
+		model.addAttribute("name", name);
+		model.addAttribute("repoCount", userRepo.count());
+		return "greeting";
 	}
-
 
 	@RequestMapping("/")
 	public String home(Model model) {
@@ -73,19 +71,19 @@ public class IndexController {
 	public ModelAndView getLoginPage(@RequestParam Optional<String> error) {
 		return new ModelAndView("login", "error", error);
 	}
-	
+
 	@Secured("ROLE_ADMIN")
 	@RequestMapping("/users")
 	public String listUsers(Model model) {
 		model.addAttribute("users", userRepo.findAllByOrderByFirstNameAscLastNameAsc());
 		return "listUsers";
 	}
-	
+
 	@RequestMapping("/myprofile")
 	public String myProfile(Model model) {
 		return profile(permissionService.findCurrentUserId(), model);
 	}
-	
+
 	@RequestMapping("/register")
 	public String register(Model model) {
 		return createUser(model);
@@ -94,12 +92,12 @@ public class IndexController {
 	@RequestMapping("/user/{userId}")
 	public String profile(@PathVariable long userId, Model model) {
 		model.addAttribute("user", userRepo.findOne(userId));
-		
-		if(!permissionService.canAccessUser(userId)) {
+
+		if (!permissionService.canAccessUser(userId)) {
 			log.warn("Cannot allow user to view " + userId);
 			return "redirect:/";
 		}
-		
+
 		List<UserImage> images = userImageRepo.findByUserId(userId);
 		if (!CollectionUtils.isEmpty(images)) {
 			model.addAttribute("userImage", images.get(0));
@@ -111,7 +109,7 @@ public class IndexController {
 	@RequestMapping(value = "/user/{userId}/edit", method = RequestMethod.GET)
 	public String profileEdit(@PathVariable long userId, Model model) {
 		model.addAttribute("user", userRepo.findOne(userId));
-		if(!permissionService.canAccessUser(userId)){
+		if (!permissionService.canAccessUser(userId)) {
 			log.warn("Cannot allow user to edit" + userId);
 			return "profile";
 		}
@@ -123,13 +121,11 @@ public class IndexController {
 	}
 
 	@RequestMapping(value = "/user/{userId}/edit", method = RequestMethod.POST)
-	public String profileSave(@ModelAttribute User user,
-			@PathVariable long userId,
+	public String profileSave(@ModelAttribute User user, @PathVariable long userId,
 			@RequestParam(name = "removeImage", defaultValue = "false") boolean removeImage,
-			@RequestParam("file") MultipartFile file,
-			Model model) {
+			@RequestParam("file") MultipartFile file, Model model) {
 
-		if(!permissionService.canAccessUser(userId)){
+		if (!permissionService.canAccessUser(userId)) {
 			log.warn("Cannot allow user to edit" + userId);
 			return "profile";
 		}
@@ -139,43 +135,43 @@ public class IndexController {
 
 		model.addAttribute("message", "User " + user.getEmail() + " saved.");
 
-		if(removeImage) {
-				imageService.deleteImage(user);
-			} else {
-				imageService.saveImage(file, user);
-			}
-		
+		if (removeImage) {
+			imageService.deleteImage(user);
+		} else {
+			imageService.saveImage(file, user);
+		}
+
 		return profile(userId, model);
 	}
-	
-	
+
 	@RequestMapping(value = "/user/create", method = RequestMethod.GET)
 	public String createUser(Model model) {
 		model.addAttribute("user", new User());
-		
+
 		return "userCreate";
 	}
 
+	// Allows create contact view to pull in user information and file. Then
+	// posts it to the user repo and saves it.
 	@RequestMapping(value = "/user/create", method = RequestMethod.POST)
-	public String createUser(@ModelAttribute User user,
-			@RequestParam("file") MultipartFile file, Model model) {
+	public String createUser(@ModelAttribute User user, @RequestParam("file") MultipartFile file, Model model) {
 
 		log.info(user.toString());
 		User savedUser = userRepo.save(user);
 		UserRole role = new UserRole(savedUser, ROLE_USER);
 		userRoleRepo.save(role);
 		imageService.saveImage(file, savedUser);
-		
-	return profile(savedUser.getId(), model);
+
+		return profile(savedUser.getId(), model);
 	}
-	
+
 	@RequestMapping(value = "/email/send", method = RequestMethod.POST)
 	public String sendEmail(Email email, Model model) {
 		emailService.sendMessage(email);
-		
+
 		return "redirect:/";
 	}
-	
+
 	@RequestMapping(value = "/email/user", method = RequestMethod.GET)
 	public String prepEmailUser(Model model) {
 		String url = "http://localhost:8080/register/";
@@ -187,4 +183,15 @@ public class IndexController {
 		return "sendMail";
 	}
 	
+	@Secured("ROLE_ADMIN")
+	@RequestMapping(value = "/user/search", method = RequestMethod.POST)
+	public String searchUsers(@RequestParam("search") String search, Model model) {
+		log.debug("Searching by " + search);
+		model.addAttribute("users",
+				userRepo.findByLastNameOrFirstNameOrEmailOrTwitterHandleOrFacebookUrlIgnoreCase(
+						search, search, search, search, search));
+		model.addAttribute("search", search);
+		return "listUsers";
+	}
+
 }
