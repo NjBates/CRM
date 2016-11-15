@@ -117,4 +117,8 @@ public class User {
 		this.active = active;
 	}
 
+//	public long getCreateUser() { 
+//		return CreateUser();
+//	}
+
 }
