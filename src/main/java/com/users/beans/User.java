@@ -15,14 +15,14 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 
-	private String firstName;
-	private String lastName;
+	public String firstName;
+	public String lastName;
 
 	@Column(unique = true)
-	private String email;
-	private String phoneNumber;
-	private String password;
-	private boolean active;
+	public String email;
+	public String phoneNumber;
+	public String password;
+	public boolean active;
 	protected User() {}
 
 	public User(String firstName, String lastName, String email, String phoneNumber, String password, boolean active) {

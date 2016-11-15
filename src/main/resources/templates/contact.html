@@ -17,6 +17,7 @@
 		<li th:text="*{email}"></li>
 		<li th:text="*{phoneNumber}"></li>
 		<li><a href="/" th:href="@{|/contact/${contact.id}/edit|}">Edit</a></li>
+		<li sec:authorize="hasRole('ROLE_ADMIN')" th:class="${#httpServletRequest.requestURI.contains('user')?'active':null}"><a href="#" th:href="@{/users}">Users</a></li>
 	</ul>
 	<a href="/contacts">Back</a>
 </body>

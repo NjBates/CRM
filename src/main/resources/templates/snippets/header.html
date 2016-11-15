@@ -13,7 +13,8 @@
 			<div class="navbar-collapse collapse">
 				<ul class="nav navbar-nav">
 					<li class="active"><a href="#" th:href="@{/}">Home</a></li>
-					<li class="active"><a href="/contacts" th:href="@{/contacts}">View Contacts</a></li>
+					<li class="active"><a href="#" th:href="@{/contacts}">View Contacts</a></li>
+					<li sec:authorize="hasRole('ROLE_ADMIN')" th:class="${#httpServletRequest.requestURI.contains('user')?'active':null}"><a href="#" th:href="@{/users}">Users</a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right" sec:authorize="isAuthenticated()">
 					<li><a href="#" onclick="$('#logoutForm').submit();">Logout</a></li>
