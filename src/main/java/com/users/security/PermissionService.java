@@ -1,49 +1,63 @@
 package com.users.security;
 
+import static com.users.security.Role.ROLE_ADMIN;
+import static com.users.security.Role.ROLE_USER;
+import static org.springframework.security.core.context.SecurityContextHolder.getContext;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import com.users.beans.User;
+import com.users.repositories.ContactRepository;
 import com.users.repositories.UserRepository;
 
-import static org.springframework.security.core.context.SecurityContextHolder.getContext;
-import static com.users.security.Role.USER;
-import static com.users.security.Role.ADMIN;
-
-
-
-
-// @Service is used for bean detection
-// also to annotate classes at service layer level.
-// if we use @Service in all layers, all the beans will get 
-// instantiated and no issues. 
-@Service
-
+@Service 
 public class PermissionService {
 	
 	@Autowired
 	private UserRepository userRepo;
 	
-	private UsernamePasswordAuthenticationToken getToken() {
-		return (UsernamePasswordAuthenticationToken) 
-getContext().getAuthentication();
-}
-
+	@Autowired
+	private ContactRepository contactRepo;
+	
+	private AbstractAuthenticationToken getToken() { 
+		return (AbstractAuthenticationToken)
+		getContext().getAuthentication();
+	}
+	
 	public boolean hasRole(Role role) {
-		for (GrantedAuthority ga : getToken().getAuthorities()) {
-			if (role.toString().equals(ga.getAuthority())) {
+		for(GrantedAuthority ga : getToken().getAuthorities()){
+			if(role.toString().equals(ga.getAuthority())){
 				return true;
 			}
 		}
 		return false;
 	}
-
-	public boolean canEditUser(long userId) {
-		long currentUserId = userRepo.findByEmail(getToken().getName()).get(0).getId();
-		return hasRole(ADMIN) || (hasRole(USER) && currentUserId == userId);
+	
+	public boolean canAccessUser(long userId) {
+		return hasRole(ROLE_ADMIN) || (hasRole(ROLE_USER) && findCurrentUserId() == userId);
+	}
+	
+	public long findCurrentUserId(){
+		List<User> users = userRepo.findByEmail(getToken().getName());
+		return users !=null && !users.isEmpty() ? users.get(0).getId() :-1;
 	}
 
+	public boolean canEditContact(long contactId) {
+		return hasRole(ROLE_USER) && contactRepo.findByUserIdAndId(findCurrentUserId(), contactId) != null;
+	}
 	
+	public String getCurrentEmail() {
+		return getToken().getName();
+	}
+	
+	public User findCurrentUser() {
+		List<User> users = userRepo.findByEmail(getToken().getName());
+		return users != null && !users.isEmpty() ? users.get(0) : new User();
+	}
 
 }
